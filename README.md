@@ -18,6 +18,52 @@ git clone https://github.com/purnasanyal/eks-flagger.git
 cd eks-flagger/eks-flagger
 ls -lt
 ```
+2.	Download all of the prerequisite software from install.sh which includes awscli, eksctl, kubectl, helm, and docker:
+
+```
+. install.sh 
+```
+Check the version of the software installed:
+```
+aws --version
+eksctl version
+kubectl version -o json 
+helm version
+docker --version
+docker info
+```
+If the docker info shows an error like “permission denied”, then reboot the Amazon EC2 instance or re-log in to the instance again:
+
+3.	Use “aws configure” to setup the config and credentials file:
+```
+AWS Access Key ID [None]: xxxxxxxxxxxxxxxxxxxxxx
+AWS Secret Access Key [None]: xxxxxxxxxxxxxxxxxx
+Default region name [None]: us-west-1
+Default output format [None]:
+```
+View and verify your current IAM profile:
+```
+aws sts get-caller-identity
+```
+4.	Create an Amazon Elastic Container Repository (Amazon ECR) and push application images.
+
+Amazon ECR is a fully-managed container registry that makes it easy for developers to share and deploy container images and artifacts. ecr setup.sh script will create a new Amazon ECR repository and also push the podinfo images (6.0.0, 6.0.1, 6.0.2, 6.1.0, 6.1.5 and 6.1.6) to the Amazon ECR. Run ecr-setup.sh script with the parameter ECR repository name (e.g. ps-flagger-repository) and region (e.g. us-west-1) 
+```
+./ecr-setup.sh <ps-flagger-repository> <us-west-1>
+```
+You’ll see output like the following (truncated).
+```
+###########################################################
+Successfully created ECR repository and pushed podinfo images to ECR #
+Please note down the ECR repository URI           
+xxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository                                                    
+```
+Note the Uniform Resource Identifier (URI) - URI - xxxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository.
+
+
+
+
+
 
 
 TODO: Fill this README out!
