@@ -1,6 +1,6 @@
-### Progressive delivery on Amazon EKS with Flagger and Gloo Edge Ingress Controller
+# Progressive delivery on Amazon EKS with Flagger and Gloo Edge Ingress Controller
 
-## Prerequisite steps to build the modernized DevOps platform
+## Prerequisite steps to build the modern DevOps platform
 
 You need an AWS Account and AWS Identity and Access Management (IAM) user to build the DevOps platform. If you don’t have an AWS account with Administrator access, then create one now by clicking here. You can build this platform in any AWS region however, I will you us-west-1 region throughout this post. You can use a laptop (Mac or Windows) or an Amazon Elastic Compute Cloud (AmazonEC2) instance as a client machine to install all of the necessary software to build the DevOps platform. For this post, I launched an Amazon EC2 instance (with Amazon Linux2 AMI) as the client and install all of the prerequisite software. You need the awscli, git, eksctl, kubectl, and helm applications to build the DevOps platform. Git clone the repo and download all of the prerequisite software in the home directory. If the Amazon EC2 instance doesn’t have git preinstalled, then run this script:
 
@@ -61,7 +61,7 @@ xxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository
 Note the Uniform Resource Identifier (URI) - URI - xxxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository.
 
 
-## Technical steps to build the modernized platform
+## Technical steps to build the modern DevOpa platform
 
 This post shows you how to use the Gloo Edge ingress controller and Flagger to automate canary releases for progressive deployment on the Amazon EKS cluster. Flagger requires a Kubernetes cluster v1.16 or newer and Gloo Edge ingress 1.6.0 or newer. This post will provide a step-by-step approach to install the Amazon EKS cluster with managed node group, Gloo Edge ingress controller, and Flagger for Gloo in the Amazon EKS cluster. Now that the cluster, metrics infrastructure, and Flagger are installed, we can install the sample application itself. We’ll use the standard Podinfo application used in the Flagger project and the accompanying loadtester tool. The Flagger “podinfo” backend service will be called by Gloo’s “VirtualService”, which is the root routing object for the Gloo Gateway. A virtual service describes the set of routes to match for a set of domains. We’ll automate the canary promotion, with the new image of the “podinfo” service, from version 6.0.0 to version 6.0.1. We’ll also create a scenario by injecting an error for automated canary rollback while deploying version 6.0.2.
 
