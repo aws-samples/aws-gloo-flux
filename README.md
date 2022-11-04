@@ -1,4 +1,4 @@
-## My Project
+## Progressive delivery on Amazon EKS with Flagger and Gloo Edge Ingress Controller
 
 TODO: Fill this README out!
 
