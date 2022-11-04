@@ -1,0 +1,5 @@
+namespace: apps
+resources:
+  - service.yaml
+  - deployment.yaml
+
