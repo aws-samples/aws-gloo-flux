@@ -216,7 +216,75 @@ Type “podinfo.example.com” in your browser and you’ll find the application
 
 ![Figure 1: Greetings from podinfo v6.0.1](https://github.com/aws-samples/aws-gloo-flux/blob/main/eks-flagger/images/podinfo%206.0.1.jpg)
 
-![image](https://user-images.githubusercontent.com/40875938/199917768-d4851f00-39aa-4b30-8829-0cab8baab6fc.png)
+## Automated rollback
+
+While doing the canary analysis, you’ll generate HTTP 500 errors and high latency to check if Flagger pauses and rolls back the faulted version. Flagger performs automatic Rollback in the case of failure.
+
+Introduce another canary deployment with podinfo image version 6.0.2 and monitor the status of the canary.
+
+```
+kubectl -n apps set image deployment/podinfo podinfod=<ECR URI>:6.0.2
+```
+
+Run HTTP 500 errors or a high-latency error from a separate terminal window.
+
+Generate HTTP 500 errors:
+```
+watch curl -H 'Host:podinfo.example.com' <load balancer’s public address>/status/500
+```
+Generate high latency:
+```
+watch curl -H 'Host:podinfo.example.com' < load balancer’s public address >/delay/2
+```
+When the number of failed checks reaches the canary analysis threshold, the traffic is routed back to the primary, the canary is scaled to zero, and the rollout is marked as failed.
+```
+kubectl get canaries --all-namespaces
+```
+```
+kubectl -n apps describe canary/podinfo
+
+Status:
+  Canary Weight:         0
+  Failed Checks:         10
+  Phase:                 Failed
+Events:
+  Type     Reason  Age   From     Message
+  ----     ------  ----  ----     -------
+  Normal   Synced  3m    flagger  Starting canary deployment for podinfo.test
+  Normal   Synced  3m    flagger  Advance podinfo.test canary weight 5
+  Normal   Synced  3m    flagger  Advance podinfo.test canary weight 10
+  Normal   Synced  3m    flagger  Advance podinfo.test canary weight 15
+  Normal   Synced  3m    flagger  Halt podinfo.test advancement success rate 69.17% < 99%
+  Normal   Synced  2m    flagger  Halt podinfo.test advancement success rate 61.39% < 99%
+  Normal   Synced  2m    flagger  Halt podinfo.test advancement success rate 55.06% < 99%
+  Normal   Synced  2m    flagger  Halt podinfo.test advancement success rate 47.00% < 99%
+  Normal   Synced  2m    flagger  (combined from similar events): Halt podinfo.test advancement success rate 38.08% < 99%
+  Warning  Synced  1m    flagger  Rolling back podinfo.test failed checks threshold reached 10
+  Warning  Synced  1m    flagger  Canary failed! Scaling down podinfo.test
+```
+## Cleanup
+When you’re done experimenting, you can delete all of the resources created during this series to avoid any additional charges. Let’s walk through deleting all of the resources used.
+### Delete Flagger resources and apps namespace
+```
+kubectl delete canary podinfo -n  apps
+kubectl delete HorizontalPodAutoscaler podinfo -n apps
+kubectl delete deployment podinfo -n   apps
+helm -n gloo-system delete flagger
+helm -n gloo-system delete gloo 
+kubectl delete namespace apps
+```
+### Delete Amazon EKS Cluster 
+After you've finished with the cluster and nodes that you created for this tutorial, you should clean up by deleting the cluster and nodes with the following command:
+```
+eksctl delete cluster --name <cluster name> --region <region code> 
+```
+### Delete Amazon ECR
+```
+aws ecr delete-repository --repository-name ps-flagger-repository  --force
+```
+
+
+
 
 
 
