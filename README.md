@@ -166,6 +166,56 @@ Validate if your application is running, and you’ll see an output with version
 curl <load balancer’s public address> -H "Host:podinfo.example.com"
 ```
 
+## Trigger progressive deployments and monitor the status
+
+You can Trigger a canary deployment by updating the application container image from 6.0.0 to 6.01.
+```
+kubectl -n apps set image deployment/podinfo  podinfod=<ECR URI>:6.0.1
+```
+Flagger detects that the deployment revision changed and starts a new rollout.
+```
+kubectl -n apps describe canary/podinfo
+```
+Monitor all canaries, as the promoted status condition can have one of the following statuses: initialized, Waiting, Progressing, Promoting, Finalizing, Succeeded, and Failed.
+```
+watch kubectl get canaries --all-namespaces
+
+curl < load balancer’s public address> -H "Host:podinfo.example.com"
+```
+Once canary is completed, validate your application. You can see that the version of the application is changed from 6.0.0 to 6.0.1.
+```
+{
+  "hostname": "podinfo-primary-658c9f9695-4pqbl",
+  "version": "6.0.1",
+  "revision": "",
+  "color": "#34577c",
+  "logo": "https://raw.githubusercontent.com/stefanprodan/podinfo/gh-pages/cuddle_clap.gif",
+  "message": "greetings from podinfo v6.0.1",
+  "goos": "linux",
+  "goarch": "amd64",
+  "runtime": "go1.16.9",
+  "num_goroutine": "9",
+  "num_cpu": "4"
+}
+```
+[Optional] Open podinfo application from the laptop browser 
+
+Find out both of the IP addresses associated with load balancer.
+```
+dig < load balancer’s public address >
+```
+Open /etc/hosts file in the laptop and add both of the IPs of load balancer in the host file.
+```
+sudo vi /etc/hosts
+<Public IP address of LB Target node> podinfo.example.com 
+e.g.
+xx.xx.xxx.xxx podinfo.example.com
+xx.xx.xxx.xxx podinfo.example.com
+```
+Type “podinfo.example.com” in your browser and you’ll find the application in form similar to this:
+
+ 
+Figure 1: Greetings from podinfo v6.0.1
 
 
 
