@@ -214,7 +214,7 @@ xx.xx.xxx.xxx podinfo.example.com
 ```
 Type “podinfo.example.com” in your browser and you’ll find the application in form similar to this:
 
-![Figure 1: Greetings from podinfo v6.0.1] (https://github.com/aws-samples/aws-gloo-flux/blob/main/eks-flagger/images/podinfo%206.0.1.jpg)
+! [Figure 1: Greetings from podinfo v6.0.1] (https://github.com/aws-samples/aws-gloo-flux/blob/main/eks-flagger/images/podinfo%206.0.1.jpg)
 
 
 
