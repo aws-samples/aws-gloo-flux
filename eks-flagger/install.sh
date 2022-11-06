@@ -9,7 +9,7 @@ git version
 
 comment
 
-# Check the version of python , Python3, awscli 
+# Check the version of python , Python3, awscli
 
 whereis python
 python --version
@@ -44,9 +44,21 @@ sudo usermod -a -G docker ec2-user
 echo "Docker installed"
 
 # Install jq for JSON parsing in CLI
-echo "Installing jq"
+echo "Installing jq (json query)"
 sudo yum install -y jq
 echo "jq installed"
+
+# Install yq (yaml query)
+echo "Installing yq (yaml query)"
+wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64.tar.gz -O - | tar xz && sudo mv yq_linux_amd64 /usr/bin/yq
+echo "yq installed"
+
+# Install Session Manager Plugin
+echo "Installing Session Manager Plugin"
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo yum install -y session-manager-plugin.rpm
+echo "Session Manager Plugin installed"
+
 
 # Install or upgrade eksctl on Linux
 
@@ -94,4 +106,3 @@ for command in kubectl  envsubst aws eksctl kubectl helm
 do
     which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
 done
-
