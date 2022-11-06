@@ -102,7 +102,7 @@ eksctl completion bash >> ~/.bash_completion
 
 # Verify the binaries are in the path and executable
 
-for command in kubectl  envsubst aws eksctl kubectl helm
+for command in kubectl jq yq envsubst aws eksctl kubectl helm
 do
     which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
 done
