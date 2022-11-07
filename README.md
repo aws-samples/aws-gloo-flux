@@ -4,23 +4,35 @@
 
 You need an AWS Account and AWS Identity and Access Management (IAM) user to build the DevOps platform. If you don’t have an AWS account with Administrator access, then create one now by clicking [here](https://aws.amazon.com/getting-started/). Create an IAM user and assign admin role. You can build this platform in any AWS region however, I will you us-west-1 region throughout this post. You can use a laptop (Mac or Windows) or an Amazon Elastic Compute Cloud (AmazonEC2) instance as a client machine to install all of the necessary software to build the DevOps platform. For this post, I [launched](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html) an Amazon EC2 instance (with Amazon Linux2 AMI) as the client and install all of the prerequisite software. You need the awscli, git, eksctl, kubectl, and helm applications to build the DevOps platform. Git clone the repo and download all of the prerequisite software in the home directory. If the Amazon EC2 instance doesn’t have git preinstalled, then run this script:
 
-1.	Install git in your Amazon EC2 instance:
+1.	Create a named profile(eks-devops)  with the config and credentials file:
+```
+aws configure --profile eks-devops
+AWS Access Key ID [None]: xxxxxxxxxxxxxxxxxxxxxx
+AWS Secret Access Key [None]: xxxxxxxxxxxxxxxxxx
+Default region name [None]: us-west-1
+Default output format [None]:
+```
+View and verify your current IAM profile:
+```
+export AWS_PROFILE=eks-devops
+aws sts get-caller-identity
+```
+2.	Install git in your Amazon EC2 instance:
 ```
 sudo yum update -y
 sudo yum install git -y
 #Check git version
 git version
 ```
-
 Clone the github repo:
 ```
-git clone https://github.com/purnasanyal/eks-flagger.git
-cd eks-flagger/eks-flagger
+git clone https://github.com/aws-samples/aws-gloo-flux.git
+```
+3.	Download all of the prerequisite software from install.sh which includes awscli, eksctl, kubectl, helm, and docker:
+```
+cd aws-gloo-flux/eks-flagger/
 ls -lt
-```
-2.	Download all of the prerequisite software from install.sh which includes awscli, eksctl, kubectl, helm, and docker:
-
-```
+chmod 700 install.sh ecr-setup.sh
 . install.sh 
 ```
 Check the version of the software installed:
@@ -32,19 +44,8 @@ helm version
 docker --version
 docker info
 ```
-If the docker info shows an error like “permission denied”, then reboot the Amazon EC2 instance or re-log in to the instance again:
+If the docker info shows an error like “permission denied”, then reboot the Amazon EC2 instance or re-log in to the instance again.
 
-3.	Use “aws configure” to setup the config and credentials file:
-```
-AWS Access Key ID [None]: xxxxxxxxxxxxxxxxxxxxxx
-AWS Secret Access Key [None]: xxxxxxxxxxxxxxxxxx
-Default region name [None]: us-west-1
-Default output format [None]:
-```
-View and verify your current IAM profile:
-```
-aws sts get-caller-identity
-```
 4.	Create an Amazon Elastic Container Repository (Amazon ECR) and push application images.
 
 Amazon ECR is a fully-managed container registry that makes it easy for developers to share and deploy container images and artifacts. ecr setup.sh script will create a new Amazon ECR repository and also push the podinfo images (6.0.0, 6.0.1, 6.0.2, 6.1.0, 6.1.5 and 6.1.6) to the Amazon ECR. Run ecr-setup.sh script with the parameter ECR repository name (e.g. ps-flagger-repository) and region (e.g. us-west-1) 
@@ -52,13 +53,11 @@ Amazon ECR is a fully-managed container registry that makes it easy for develope
 ./ecr-setup.sh <ps-flagger-repository> <us-west-1>
 ```
 You’ll see output like the following (truncated).
-```
 ###########################################################
 Successfully created ECR repository and pushed podinfo images to ECR #
-Please note down the ECR repository URI           
+**Please note down the ECR repository URI           
 xxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository                                                    
-```
-Note the Uniform Resource Identifier (URI) - URI - xxxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository.
+
 
 
 ## Technical steps to build the modern DevOpa platform
@@ -244,23 +243,31 @@ kubectl get canaries --all-namespaces
 kubectl -n apps describe canary/podinfo
 
 Status:
-  Canary Weight:         0
-  Failed Checks:         10
-  Phase:                 Failed
+  Canary Weight:  0
+  Conditions:
+    Last Transition Time:  2022-11-07T07:11:52Z
+    Last Update Time:      2022-11-07T07:11:52Z
+    Message:               Canary analysis failed, Deployment scaled to zero.
+    Reason:                Failed
+    Status:                False
+    Type:                  Promoted
+  Failed Checks:           0
+  Iterations:              0
+  Last Applied Spec:       68c5896494
+  Last Promoted Spec:      7884456869
+  Last Transition Time:    2022-11-07T07:13:32Z
+  Phase:                   Failed
+  Tracked Configs:
 Events:
-  Type     Reason  Age   From     Message
-  ----     ------  ----  ----     -------
-  Normal   Synced  3m    flagger  Starting canary deployment for podinfo.test
-  Normal   Synced  3m    flagger  Advance podinfo.test canary weight 5
-  Normal   Synced  3m    flagger  Advance podinfo.test canary weight 10
-  Normal   Synced  3m    flagger  Advance podinfo.test canary weight 15
-  Normal   Synced  3m    flagger  Halt podinfo.test advancement success rate 69.17% < 99%
-  Normal   Synced  2m    flagger  Halt podinfo.test advancement success rate 61.39% < 99%
-  Normal   Synced  2m    flagger  Halt podinfo.test advancement success rate 55.06% < 99%
-  Normal   Synced  2m    flagger  Halt podinfo.test advancement success rate 47.00% < 99%
-  Normal   Synced  2m    flagger  (combined from similar events): Halt podinfo.test advancement success rate 38.08% < 99%
-  Warning  Synced  1m    flagger  Rolling back podinfo.test failed checks threshold reached 10
-  Warning  Synced  1m    flagger  Canary failed! Scaling down podinfo.test
+  Type     Reason  Age                   From     Message
+  ----     ------  ----                  ----     -------
+  Warning  Synced  15m                   flagger  podinfo-primary.apps not ready: waiting for rollout to finish: observed deployment generation less than desired generation
+  Warning  Synced  15m                   flagger  podinfo-primary.apps not ready: waiting for rollout to finish: 0 of 2 (readyThreshold 100%) updated replicas are available
+Normal   Synced  11m                   flagger  Advance podinfo.apps canary weight 20
+  Warning  Synced  10m                   flagger  podinfo-primary.apps not ready: waiting for rollout to finish: 1 old replicas are pending termination
+  Normal   Synced  3m28s (x10 over 11m)  flagger  (combined from similar events): New revision detected! Scaling up podinfo.apps
+  Warning  Synced  3m18s (x2 over 12m)   flagger  canary deployment podinfo.apps not ready: waiting for rollout to finish: 0 of 2
+
 ```
 ## Cleanup
 When you’re done experimenting, you can delete all of the resources created during this series to avoid any additional charges. Let’s walk through deleting all of the resources used.
