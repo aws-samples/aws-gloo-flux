@@ -89,13 +89,9 @@ echo "helm installion completed"
 
 sudo yum -y install gettext bash-completion moreutils
 
-# Enable kubectl bash_completion:
+# Enable bash_completion:
 
 kubectl completion bash >>  ~/.bash_completion
-. ~/.bash_completion
-
-# Enable eksctl bash-completion:
-
 eksctl completion bash >> ~/.bash_completion
 . ~/.bash_completion
 
