@@ -54,7 +54,8 @@ Amazon ECR is a fully-managed container registry that makes it easy for develope
 ```
 You’ll see output like the following (truncated).
 ###########################################################
-Successfully created ECR repository and pushed podinfo images to ECR #
+Successfully created ECR repository and pushed podinfo images to ECR
+
 **Please note down the ECR repository URI           
 xxxxxx.dkr.ecr.us-west-1.amazonaws.com/ps-flagger-repository                                                    
 
