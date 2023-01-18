@@ -2,7 +2,7 @@
 
 ## Prerequisite steps to build the modern DevOps platform
 
-You need an AWS Account and AWS Identity and Access Management (IAM) user to build the DevOps platform. If you don’t have an AWS account with Administrator access, then create one now by clicking [here](https://aws.amazon.com/getting-started/). Create an IAM user and assign admin role. You can build this platform in any AWS region however, I will you us-west-1 region throughout this post. You can use a laptop (Mac or Windows) or an Amazon Elastic Compute Cloud (AmazonEC2) instance as a client machine to install all of the necessary software to build the DevOps platform. For this post, I [launched](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html) an Amazon EC2 instance (with Amazon Linux2 AMI) as the client and install all of the prerequisite software. You need the awscli, git, eksctl, kubectl, and helm applications to build the DevOps platform. Git clone the repo and download all of the prerequisite software in the home directory. If the Amazon EC2 instance doesn’t have git preinstalled, then run this script:
+You need an AWS Account and AWS Identity and Access Management (IAM) user to build the DevOps platform. If you don’t have an AWS account with Administrator access, then create one now by clicking [here](https://aws.amazon.com/getting-started/). Create an IAM user and assign admin role. You can build this platform in any AWS region however, I will you us-west-1 region throughout this post. You can use a laptop (Mac or Windows) or an Amazon Elastic Compute Cloud (AmazonEC2) instance as a client machine to install all of the necessary software to build the DevOps platform. For this post, I [launched](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html) an Amazon EC2 instance (with Amazon Linux2 AMI) as the client and install all of the prerequisite software. You need the awscli, git, eksctl, kubectl, and helm applications to build the GitOps platform. Here are the prerequisite steps
 
 1.	Create a named profile(eks-devops)  with the config and credentials file:
 ```
@@ -17,7 +17,7 @@ View and verify your current IAM profile:
 export AWS_PROFILE=eks-devops
 aws sts get-caller-identity
 ```
-2.	Install git in your Amazon EC2 instance:
+2.	If the Amazon EC2 instance doesn’t have git preinstalled, then install git in your Amazon EC2 instance,
 ```
 sudo yum update -y
 sudo yum install git -y
