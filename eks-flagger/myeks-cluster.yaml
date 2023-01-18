@@ -3,7 +3,7 @@ kind: ClusterConfig
 metadata:
   name: ps-eks-44 
   region: us-west-1
-  version: "1.23"
+  version: "1.24"
 availabilityZones: [us-west-1a, us-west-1b]
 managedNodeGroups:
 - name: nodegroup
