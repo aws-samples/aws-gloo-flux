@@ -67,7 +67,7 @@ This post shows you how to use the Gloo Edge ingress controller and Flagger to a
 
 
 
-1.	Use myeks-cluster.yaml to create your Amazon EKS cluster with managed nodegroup. myeks-cluster.yaml deployment file has clustername value as ps-eks-44, region value as us-west-1, availabilityZones as [us-west-1a, us-west-1b], Kubernetes version as 1.23, and nodegroup Amazon EC2 instance type as m5.2xlarge. You can change this value if you want to build the cluster in a separate region or availability zone.
+1.	Use myeks-cluster.yaml to create your Amazon EKS cluster with managed nodegroup. myeks-cluster.yaml deployment file has clustername value as ps-eks-44, region value as us-west-1, availabilityZones as [us-west-1a, us-west-1b], Kubernetes version as 1.24, and nodegroup Amazon EC2 instance type as m5.2xlarge. You can change this value if you want to build the cluster in a separate region or availability zone.
 ```
 eksctl create cluster -f myeks-cluster.yaml
 ```
